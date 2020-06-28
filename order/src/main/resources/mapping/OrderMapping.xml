@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhdsmart.dao.OrderDao">
+
+    <resultMap id="OrderMap" type="order">
+        <id column="orderId" property="orderId"></id>
+        <result column="createDate" property="createDate"></result>
+        <result column="state" property="state"></result>
+        <association property="menu" select="com.zhdsmart.dao.MenuDao.findById" column="menuId"></association>
+        <association property="user" select="com.zhdsmart.dao.UserDao.findById" column="userId"></association>
+    </resultMap>
+    
+    <select id="findAll" parameterType="int" resultMap="OrderMap">
+        select  orderId,menuId,createDate,state from t_order where userId=#{userId} limit #{param1},#{param2}
+    </select>
+
+    <select id="countByUserId" parameterType="int" resultType="int">
+        select count(*) from t_order where userId=#{userId}
+    </select>
+
+    <insert id="save" parameterType="Order">
+        insert into t_order(userId,menuId,createDate,state)
+        values(#{user.userId},#{menu.menuId},#{createDate},0)
+    </insert>
+
+    <delete id="deleteById" parameterType="int">
+        delete from t_user where orderId=#{orderId}
+    </delete>
+
+    <select id="findAllByState" parameterType="int" resultMap="OrderMap">
+        select orderId,menuId,userId,createDate,state from t_order where state=0 limit #{param1},#{param2}
+    </select>
+
+    <update id="updateState" parameterType="int">
+        update t_order set state=1 where orderId=#{orderId}
+    </update>
+
+    <select id="count" resultType="int">
+        select count(*) from t_order where state=0
+    </select>
+
+</mapper>
